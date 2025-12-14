@@ -1,0 +1,8 @@
+C:\test-n\api-pd\api-pd\obj\Debug\net8.0\api-pd.csproj.AssemblyReference.cache
+C:\test-n\api-pd\api-pd\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\test-n\api-pd\api-pd\obj\Debug\net8.0\api-pd.GeneratedMSBuildEditorConfig.editorconfig
+C:\test-n\api-pd\api-pd\obj\Debug\net8.0\api-pd.AssemblyInfoInputs.cache
+C:\test-n\api-pd\api-pd\obj\Debug\net8.0\api-pd.AssemblyInfo.cs
+C:\test-n\api-pd\api-pd\obj\Debug\net8.0\api-pd.csproj.CoreCompileInputs.cache
+C:\test-n\api-pd\api-pd\obj\Debug\net8.0\api-pd.MvcApplicationPartsAssemblyInfo.cs
+C:\test-n\api-pd\api-pd\obj\Debug\net8.0\api-pd.MvcApplicationPartsAssemblyInfo.cache
