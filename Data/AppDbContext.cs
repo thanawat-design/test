@@ -14,5 +14,4 @@ namespace api_pd.Data
         public DbSet<Category> Categories => Set<Category>();
     }
 
-
 }

@@ -54,6 +54,7 @@ namespace api_pd.Controllers
         }
 
         // ===================== POST =====================
+        
 
         [HttpPost]
         public async Task<IActionResult> Create(CategoryCreateDto dto)
@@ -84,8 +85,9 @@ namespace api_pd.Controllers
             );
         }
 
-        // ===================== PUT =====================
 
+        // ===================== PUT =====================
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, CategoryUpdateDto dto)
         {
@@ -119,6 +121,7 @@ namespace api_pd.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
     }
 
 }

@@ -61,7 +61,7 @@ namespace api_pd.Controllers
             return Ok(product);
         }
 
-        // ===================== CREATE =====================
+        // ===================== POST =====================
         [HttpPost]
         public async Task<ActionResult<ProductResponseDto>> Create(ProductCreateDto dto)
         {
@@ -104,7 +104,8 @@ namespace api_pd.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, response);
         }
 
-        // ===================== UPDATE =====================
+        // ===================== PUT =====================
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, ProductUpdateDto dto)
         {
@@ -114,6 +115,13 @@ namespace api_pd.Controllers
             var product = await _context.Products.FindAsync(id);
             if (product == null)
                 return NotFound();
+
+            bool categoryExists = await _context.Categories
+                .AnyAsync(c => c.Id == dto.CategoryId);
+
+            if (!categoryExists)
+                return BadRequest("Category ID ไม่ถูกต้อง"); 
+                                                             
 
             bool exists = await _context.Products.AnyAsync(p =>
                 p.Name == dto.Name &&
@@ -126,9 +134,17 @@ namespace api_pd.Controllers
             product.Name = dto.Name;
             product.Price = dto.Price;
             product.Stock = dto.Stock;
-            product.CategoryId = dto.CategoryId;
+            product.CategoryId = dto.CategoryId; 
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, "เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + ex.Message);
+            }
+
             return NoContent();
         }
 
