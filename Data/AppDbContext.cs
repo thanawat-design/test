@@ -7,14 +7,11 @@ namespace api_pd.Data
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options) { }
 
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<User> Users { get; set; }
-
+        public DbSet<User> Users => Set<User>();
+        public DbSet<Product> Products => Set<Product>();
+        public DbSet<Category> Categories => Set<Category>();
     }
 
 

@@ -19,32 +19,51 @@ namespace api_pd.Controllers
             _context = context;
         }
 
-        // READ ALL
         [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetProducts()
         {
             var products = await _context.Products
                 .Include(p => p.Category)
+                .Select(p => new ProductResponseDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category!.Name
+                })
                 .ToListAsync();
 
             return Ok(products);
         }
 
-        // READ BY ID
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProduct(int id)
+        public async Task<ActionResult<ProductResponseDto>> GetProduct(int id)
         {
             var product = await _context.Products
                 .Include(p => p.Category)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .Where(p => p.Id == id)
+                .Select(p => new ProductResponseDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category!.Name
+                })
+                .FirstOrDefaultAsync();
 
-            if (product == null) return NotFound();
+            if (product == null)
+                return NotFound();
+
             return Ok(product);
         }
 
-        // CREATE
+        // ===================== CREATE =====================
         [HttpPost]
-        public async Task<IActionResult> Create(ProductCreateDto dto)
+        public async Task<ActionResult<ProductResponseDto>> Create(ProductCreateDto dto)
         {
             bool categoryExists = await _context.Categories
                 .AnyAsync(c => c.Id == dto.CategoryId);
@@ -69,11 +88,23 @@ namespace api_pd.Controllers
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return Ok(product);
+            var response = new ProductResponseDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Price = product.Price,
+                Stock = product.Stock,
+                CategoryId = product.CategoryId,
+                CategoryName = (await _context.Categories
+                    .Where(c => c.Id == product.CategoryId)
+                    .Select(c => c.Name)
+                    .FirstAsync())
+            };
+
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, response);
         }
 
-
-        // UPDATE
+        // ===================== UPDATE =====================
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, ProductUpdateDto dto)
         {
@@ -98,22 +129,22 @@ namespace api_pd.Controllers
             product.CategoryId = dto.CategoryId;
 
             await _context.SaveChangesAsync();
-            return Ok(product);
+            return NoContent();
         }
 
-
-        // DELETE
+        // ===================== DELETE =====================
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _context.Products.FindAsync(id);
-            if (product == null) return NotFound();
+            if (product == null)
+                return NotFound();
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-
     }
+
 }

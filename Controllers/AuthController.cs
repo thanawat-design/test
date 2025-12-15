@@ -22,15 +22,12 @@ namespace api_pd.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login(User login)
+        public IActionResult Login(string username, string password)
         {
             var user = _context.Users
-                .FirstOrDefault(u =>
-                    u.Username == login.Username &&
-                    u.Password == login.Password);
+                .FirstOrDefault(u => u.Username == username && u.Password == password);
 
-            if (user == null)
-                return Unauthorized("Username หรือ Password ไม่ถูกต้อง");
+            if (user == null) return Unauthorized();
 
             var claims = new[]
             {
@@ -39,7 +36,7 @@ namespace api_pd.Controllers
         };
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_config["Jwt:Key"])
+                Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
             );
 
             var token = new JwtSecurityToken(
@@ -50,11 +47,8 @@ namespace api_pd.Controllers
                 signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
             );
 
-            return Ok(new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(token)
-            });
+            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
         }
-
     }
+
 }

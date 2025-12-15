@@ -19,19 +19,41 @@ namespace api_pd.Controllers
             _context = context;
         }
 
+        // ===================== GET =====================
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
-            return Ok(await _context.Categories.ToListAsync());
+            var data = await _context.Categories
+                .Select(c => new CategoryResponseDto
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                })
+                .ToListAsync();
+
+            return Ok(data);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Categories
+                .Where(c => c.Id == id)
+                .Select(c => new CategoryResponseDto
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                })
+                .FirstOrDefaultAsync();
+
             if (category == null) return NotFound();
             return Ok(category);
         }
+
+        // ===================== POST =====================
 
         [HttpPost]
         public async Task<IActionResult> Create(CategoryCreateDto dto)
@@ -51,15 +73,22 @@ namespace api_pd.Controllers
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
 
-            return Ok(category);
+            return CreatedAtAction(
+                nameof(GetCategory),
+                new { id = category.Id },
+                new CategoryResponseDto
+                {
+                    Id = category.Id,
+                    Name = category.Name
+                }
+            );
         }
+
+        // ===================== PUT =====================
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, CategoryUpdateDto dto)
         {
-            if (id != dto.Id)
-                return BadRequest("ID ไม่ตรงกัน");
-
             var category = await _context.Categories.FindAsync(id);
             if (category == null)
                 return NotFound();
@@ -74,19 +103,22 @@ namespace api_pd.Controllers
             category.Description = dto.Description;
 
             await _context.SaveChangesAsync();
-            return Ok(category);
+            return NoContent();
         }
+
+        // ===================== DELETE =====================
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var category = await _context.Categories.FindAsync(id);
-            if (category == null) return NotFound();
+            if (category == null)
+                return NotFound();
 
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
             return NoContent();
         }
-
     }
+
 }

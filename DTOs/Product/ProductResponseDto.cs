@@ -1,17 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace api_pd.DTOs.Product
+﻿namespace api_pd.DTOs.Product
 {
-    public class ProductUpdateDto
+    public class ProductResponseDto
     {
-        [Required]
         public int Id { get; set; }
-        [Required, MaxLength(150)]
         public string Name { get; set; } = null!;
         public decimal Price { get; set; }
         public int Stock { get; set; }
-        [Required]
         public int CategoryId { get; set; }
+        public string CategoryName { get; set; } = null!;
 
     }
 }
