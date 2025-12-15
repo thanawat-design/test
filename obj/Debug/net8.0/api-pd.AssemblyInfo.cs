@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("api-pd")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cc217d92148fdb2b5deb245b8ddfa59548499432")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+932ebc0334dd5a1957765e3dcaafdd333390ab9f")]
 [assembly: System.Reflection.AssemblyProductAttribute("api-pd")]
 [assembly: System.Reflection.AssemblyTitleAttribute("api-pd")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,4 +1,5 @@
 ﻿using api_pd.Data;
+using api_pd.DTOs.Category;
 using api_pd.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,19 +34,45 @@ namespace api_pd.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Category category)
+        public async Task<IActionResult> Create(CategoryCreateDto dto)
         {
+            bool exists = await _context.Categories
+                .AnyAsync(c => c.Name == dto.Name);
+
+            if (exists)
+                return BadRequest("มีหมวดนี้อยู่แล้ว");
+
+            var category = new Category
+            {
+                Name = dto.Name,
+                Description = dto.Description
+            };
+
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
+
             return Ok(category);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Category category)
+        public async Task<IActionResult> Update(int id, CategoryUpdateDto dto)
         {
-            if (id != category.Id) return BadRequest();
+            if (id != dto.Id)
+                return BadRequest("ID ไม่ตรงกัน");
 
-            _context.Entry(category).State = EntityState.Modified;
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+                return NotFound();
+
+            bool exists = await _context.Categories
+                .AnyAsync(c => c.Name == dto.Name && c.Id != id);
+
+            if (exists)
+                return BadRequest("ชื่อหมวดซ้ำ");
+
+            category.Name = dto.Name;
+            category.Description = dto.Description;
+
             await _context.SaveChangesAsync();
             return Ok(category);
         }
